@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gráficos Dinâmicos</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-gap: 20px;
+            padding: 5px;
+        }
+
+        .chart-container {
+            width: 100%;
+            height: 260px;
+        }
+
+        .highcharts-figure {
+            margin: 0;
+        }
+
+        .export-button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="chartGrid"></div>
+
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/highcharts-more.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/export-data.js"></script>
+    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+    <script>
+        // Exemplo de dados da planilha
+        const data = [
+            { name: "User 1", result: 120 },
+            { name: "User 2", result: 80 },
+            { name: "User 3", result: 150 },
+            { name: "User 4", result: 60 },
+            { name: "User 5", result: 90 },
+            { name: "User 6", result: 110 },
+            { name: "User 7", result: 170 },
+            { name: "User 8", result: 30 },
+            { name: "User 9", result: 140 },
+            { name: "User 10", result: 50 },
+            { name: "User 11", result: 130 },
+            { name: "User 12", result: 100 },
+            { name: "User 13", result: 180 },
+            { name: "User 14", result: 40 },
+            { name: "User 15", result: 160 },
+            { name: "User 16", result: 200 },
+        ];
+
+        const charts = [];
+
+        // Função para criar gráficos dinamicamente
+        function createChart(containerId, title, value) {
+            const chart = Highcharts.chart(containerId, {
+                chart: {
+                    type: 'gauge',
+                    plotBackgroundColor: null,
+                    plotBackgroundImage: null,
+                    plotBorderWidth: 0,
+                    plotShadow: false,
+                    height: '80%'
+                },
+
+                title: {
+                    text: title
+                },
+
+                pane: {
+                    startAngle: -90,
+                    endAngle: 89.9,
+                    background: null,
+                    center: ['50%', '75%'],
+                    size: '110%'
+                },
+
+                // Remover créditos (marca d'água)
+                credits: {
+                    enabled: false
+                },
+
+                // Desativar exportação individual
+                exporting: {
+                    enabled: false
+                },
+
+                yAxis: {
+                    min: 0,
+                    max: 200,
+                    tickPixelInterval: 72,
+                    tickPosition: 'inside',
+                    tickColor: Highcharts.defaultOptions.chart.backgroundColor || '#FFFFFF',
+                    tickLength: 20,
+                    tickWidth: 2,
+                    minorTickInterval: null,
+                    labels: {
+                        distance: 20,
+                        style: {
+                            fontSize: '14px'
+                        }
+                    },
+                    lineWidth: 0,
+                    plotBands: [{
+                        from: 0,
+                        to: 130,
+                        color: '#DF5353',
+                        thickness: 20,
+                        borderRadius: '50%'
+                    }, {
+                        from: 150,
+                        to: 200,
+                        color: '#55BF3B',
+                        thickness: 20,
+                        borderRadius: '50%'
+                    }, {
+                        from: 120,
+                        to: 160,
+                        color: '#DDDF0D',
+                        thickness: 20
+                    }]
+                },
+
+                series: [{
+                    name: 'Speed',
+                    data: [value],
+                    tooltip: {
+                        valueSuffix: ' agendamentos'
+                    },
+                    dataLabels: {
+                        format: '{y} agendamentos',
+                        borderWidth: 0,
+                        color: (
+                            Highcharts.defaultOptions.title &&
+                            Highcharts.defaultOptions.title.style &&
+                            Highcharts.defaultOptions.title.style.color
+                        ) || '#333333',
+                        style: {
+                            fontSize: '16px'
+                        }
+                    },
+                    dial: {
+                        radius: '80%',
+                        backgroundColor: 'gray',
+                        baseWidth: 12,
+                        baseLength: '0%',
+                        rearLength: '0%'
+                    },
+                    pivot: {
+                        backgroundColor: 'gray',
+                        radius: 6
+                    }
+
+                }]
+            });
+
+            charts.push(chart);
+        }
+
+        // Gerar e inserir gráficos na grade
+        const chartGrid = document.getElementById('chartGrid');
+        data.forEach((item, index) => {
+            const chartContainer = document.createElement('figure');
+            chartContainer.classList.add('highcharts-figure', 'chart-container');
+            chartContainer.id = `chart-${index}`;
+            chartGrid.appendChild(chartContainer);
+            createChart(chartContainer.id, item.name, item.result);
+        });
+    </script>
+</body>
+</html>
