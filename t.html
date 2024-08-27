@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gráfico com Troféu e Velocímetro</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .container {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            margin: 20px;
+        }
+
+        .chart-container {
+            width: 45%;
+            min-width: 300px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Gráfico Chart.js -->
+    <div class="chart-container">
+        <canvas id="trophyChart"></canvas>
+    </div>
+
+    <!-- Gráfico Highcharts -->
+    <figure class="chart-container">
+        <div id="gaugeContainer"></div>
+    </figure>
+</div>
+
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/highcharts-more.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/modules/export-data.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
+
+<script>
+// Configuração do Gráfico Chart.js (com troféu)
+const ctx = document.getElementById('trophyChart').getContext('2d');
+new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: ['Equipe 1', 'Equipe 2', 'Equipe 3', 'Equipe 4'],
+        datasets: [{
+            label: 'Pontuação',
+            data: [65, 59, 80, 81],
+            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+            borderColor: 'rgba(54, 162, 235, 1)',
+            borderWidth: 1,
+            borderRadius: 5,
+            barPercentage: 0.5
+        }]
+    },
+    options: {
+        plugins: {
+            legend: {
+                display: false
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    }
+});
+
+// Configuração do Gráfico Highcharts (com velocímetro)
+Highcharts.chart('gaugeContainer', {
+    chart: {
+        type: 'gauge',
+        plotBackgroundColor: null,
+        plotBackgroundImage: null,
+        plotBorderWidth: 0,
+        plotShadow: false,
+        height: '80%'
+    },
+    title: {
+        text: ''
+    },
+    pane: {
+        startAngle: -90,
+        endAngle: 89.9,
+        background: null,
+        center: ['50%', '75%'],
+        size: '110%'
+    },
+    yAxis: {
+        min: 0,
+        max: 400,
+        tickPixelInterval: 72,
+        tickPosition: 'inside',
+        tickColor: Highcharts.defaultOptions.chart.backgroundColor || '#FFFFFF',
+        tickLength: 20,
+        tickWidth: 2,
+        minorTickInterval: null,
+        labels: {
+            distance: 20,
+            style: {
+                fontSize: '14px'
+            }
+        },
+        lineWidth: 0,
+        plotBands: [{
+            from: 0,
+            to: 50,
+            color: '#DF5353', // red
+            thickness: 20,
+            borderRadius: '50%'
+        }, {
+            from: 160,
+            to: 400,
+            color: '#55BF3B', // green
+            thickness: 20,
+            borderRadius: '50%'
+        }, {
+            from: 50,
+            to: 160,
+            color: '#DDDF0D', // yellow
+            thickness: 20
+        }]
+    },
+    series: [{
+        name: 'Speed',
+        data: [80],
+        tooltip: {
+            valueSuffix: ' km/h'
+        },
+        dataLabels: {
+            format: '{y} km/h',
+            borderWidth: 0,
+            color: (
+                Highcharts.defaultOptions.title &&
+                Highcharts.defaultOptions.title.style &&
+                Highcharts.defaultOptions.title.style.color
+            ) || '#333333',
+            style: {
+                fontSize: '16px'
+            }
+        },
+        dial: {
+            radius: '80%',
+            backgroundColor: 'gray',
+            baseWidth: 12,
+            baseLength: '0%',
+            rearLength: '0%'
+        },
+        pivot: {
+            backgroundColor: 'gray',
+            radius: 6
+        }
+    }]
+});
+
+// Atualização dinâmica do gráfico Highcharts
+setInterval(() => {
+    const chart = Highcharts.charts[0];
+    if (chart && !chart.renderer.forExport) {
+        const point = chart.series[0].points[0],
+            inc = Math.round((Math.random() - 0.5) * 20);
+
+        let newVal = point.y + inc;
+        if (newVal < 0 || newVal > 200) {
+            newVal = point.y - inc;
+        }
+
+        point.update(newVal);
+    }
+
+}, 3000);
+</script>
+
+</body>
+</html>
